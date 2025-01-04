@@ -1,7 +1,7 @@
 Step by step membuat project ini
 1. Installation
   - install shadcn/ui
-  - 
+  - install berbagai dependency
 2. Membuat halaman login
   - membuat komponen ui = authscreen.tsx, halamandepan.tsx
   - membuat komponen re-usable = daftar-card.tsx, login-card.tsx
