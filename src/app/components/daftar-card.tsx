@@ -1,15 +1,12 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { FaFacebookSquare } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import { VscAccount } from "react-icons/vsc";
 import { MdOutlineLock } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Provider } from "@supabase/supabase-js";
 import { supabaseBrowserClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 
@@ -27,15 +24,15 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
 // import { useRouter } from "next/navigation";
 
-const LoginCard = () => {
-  // fungsi untuk login via sosmed auth
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+const DaftarCard = () => {
+  // fungsi untuk registrasi via email
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   // const [isLogin, setIsLogin] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
 
   // cek session login
 
@@ -57,39 +54,39 @@ const LoginCard = () => {
 
   // fungsi untuk submit form
   async function onSubmit(values: z.infer<typeof formScrema>) {
-    // setIsAuthenticating(true); // Set loading state
-    setError(null); // Clear previous errors
+    // setLoading(true);
+    setError(null);
+    console.log(values);
 
     try {
-      const { error: supabaseError } =
-        await supabaseBrowserClient.auth.signInWithPassword({
-          email: values.email,
-          password: values.password,
-        });
+      const { error } = await supabaseBrowserClient.auth.signUp({
+        email: values.email,
+        password: values.password,
+      });
 
-      if (supabaseError) {
-        setError(supabaseError.message);
+      if (error) {
+        setError(error.message);
       } else {
-        router.push("/dashboard"); // Redirect on successful login
+        alert("Cek email anda untuk verifikasi");
+        form.reset();
       }
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
+      setError(err.message || "Terjadi kesalahan");
     } finally {
-      // setIsAuthenticating(false); // Reset loading state
+      // setLoading(false);
     }
   }
-
   // fungsi untuk supabase OAuth
-  async function socialAuth(provider: Provider) {
-    setIsAuthenticating(true);
-    await supabaseBrowserClient.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${location.origin}/auth/callback`,
-      },
-    });
-    setIsAuthenticating(false);
-  }
+  // async function socialAuth(provider: Provider) {
+  //   setIsAuthenticating(true);
+  //   await supabaseBrowserClient.auth.signInWithOAuth({
+  //     provider,
+  //     options: {
+  //       redirectTo: `${location.origin}/login/callback`,
+  //     },
+  //   });
+  //   setIsAuthenticating(false);
+  // }
 
   // if (!isLogin) return null;
 
@@ -107,7 +104,7 @@ const LoginCard = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
               <div className="relative overflow-visible">
                 <FormField
-                  disabled={isAuthenticating}
+                  // disabled={loading}
                   control={form.control}
                   name="email"
                   render={({ field }) => (
@@ -129,8 +126,7 @@ const LoginCard = () => {
               </div>
               <div className="relative">
                 <FormField
-                  disabled={isAuthenticating}
-                  control={form.control}
+                  // disabled={loading}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
@@ -149,39 +145,16 @@ const LoginCard = () => {
                   )}
                 ></FormField>
               </div>
-              <Button
-                type="submit"
-                disabled={isAuthenticating}
-                className="w-full"
-              >
-                <p>Masuk</p>
+              {error && <div className="text-red-500">{error}</div>}
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? "Registering..." : "Register"}
               </Button>
             </form>
           </Form>
           <div className="flex items-center">
             <div className="border-t mr-[10px] flex-1" />
-            <p>atau login dengan</p>
+
             <div className="border-t ml-[10px] flex-1" />
-          </div>
-          <div className="flex flex-col space-y-3">
-            <Button
-              disabled={isAuthenticating}
-              onClick={() => socialAuth("google")}
-              variant={"outline"}
-              className=""
-            >
-              <FcGoogle />
-              <p>Login dengan Google</p>
-            </Button>
-            <Button
-              disabled={isAuthenticating}
-              onClick={() => socialAuth("facebook")}
-              variant={"outline"}
-              className=""
-            >
-              <FaFacebookSquare className="text-blue-600" />
-              <p>Login dengan Facebook</p>
-            </Button>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">
@@ -205,4 +178,4 @@ const LoginCard = () => {
   );
 };
 
-export default LoginCard;
+export default DaftarCard;

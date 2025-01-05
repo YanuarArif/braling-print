@@ -1,13 +1,13 @@
-import LoginCard from "@/app/components/login-card";
+import DaftarCard from "@/app/components/daftar-card";
 
-const LoginPage = () => {
+const DaftarPage = () => {
   return (
     <div className="h-full flex items-center justify-center bg-black/20">
       <div className="md:h-auto md:w-[700px] transition-all duration-500 ease-in-out sm:w-[300px]">
-        <LoginCard />
+        <DaftarCard />
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default DaftarPage;
