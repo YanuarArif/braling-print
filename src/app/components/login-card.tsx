@@ -3,9 +3,13 @@
 import { Input } from "@/components/ui/input";
 import { FaFacebookSquare } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VscAccount } from "react-icons/vsc";
-import { MdOutlineLock } from "react-icons/md";
+import {
+  MdOutlineLock,
+  MdOutlineVisibility,
+  MdOutlineVisibilityOff,
+} from "react-icons/md";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,54 +32,59 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
+import { FaXTwitter } from "react-icons/fa6";
 // import { useRouter } from "next/navigation";
 
 const LoginCard = () => {
-  // fungsi untuk login via sosmed auth
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   // const [isLogin, setIsLogin] = useState(false);
   const router = useRouter();
 
   // cek session login
+  useEffect(() => {}, []);
 
   // form schema from zod
-  const formScrema = z.object({
+  const formSchema = z.object({
     email: z.string().email({ message: "Email tidak valid" }),
     password: z
       .string()
       .min(1, { message: "Password wajib diisi" })
       .min(6, "Password minimal 6 karakter"),
   });
-  const form = useForm<z.infer<typeof formScrema>>({
-    resolver: zodResolver(formScrema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  // fungsi untuk submit form
-  async function onSubmit(values: z.infer<typeof formScrema>) {
-    // setIsAuthenticating(true); // Set loading state
-    setError(null); // Clear previous errors
+  // fungsi untuk submit form via email dan password
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsAuthenticating(true);
 
     try {
-      const { error: supabaseError } =
-        await supabaseBrowserClient.auth.signInWithPassword({
-          email: values.email,
-          password: values.password,
-        });
+      console.log(values);
+      // Sign in with Supabase
+      const { error } = await supabaseBrowserClient.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
 
-      if (supabaseError) {
-        setError(supabaseError.message);
-      } else {
-        router.push("/dashboard"); // Redirect on successful login
+      if (error) {
+        // Handle authentication error
+        console.error("Authentication error:", error.message);
+        alert("Login failed. Please check your email and password.");
+        setIsAuthenticating(false); // Reset loading state on error
+        return;
       }
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
+
+      // Redirect to dashboard on successful login
+      router.push("/dashboard");
     } finally {
-      // setIsAuthenticating(false); // Reset loading state
+      // Ensure loading state is reset
+      setIsAuthenticating(false);
     }
   }
 
@@ -94,29 +103,29 @@ const LoginCard = () => {
   // if (!isLogin) return null;
 
   return (
-    <Card className="w-full h-full md:flex">
-      <div className="md:w-1/2">
-        <CardHeader className="flex items-center">
-          <CardTitle>Selamat Datang</CardTitle>
+    <>
+      <Card className="w-full h-full py-5 shadow-md">
+        <CardHeader className="flex items-center text-center">
+          <CardTitle className="text-2xl font-bold">Selamat Datang</CardTitle>
           <CardDescription>
             Silahkan login untuk membuat pesanan
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 md:px-10">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-              <div className="relative overflow-visible">
+              <div className="">
                 <FormField
-                  disabled={isAuthenticating}
+                  // disabled={isAuthenticating}
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex relative items-center">
+                        <div className="flex relative items-center ">
                           <VscAccount className="absolute left-3" />
                           <Input
-                            className="pl-10"
+                            className="pl-10 text-sm"
                             placeholder="Email"
                             {...field}
                           />
@@ -127,9 +136,9 @@ const LoginCard = () => {
                   )}
                 ></FormField>
               </div>
-              <div className="relative">
+              <div className="pb-3">
                 <FormField
-                  disabled={isAuthenticating}
+                  // disabled={isAuthenticating}
                   control={form.control}
                   name="password"
                   render={({ field }) => (
@@ -138,10 +147,24 @@ const LoginCard = () => {
                         <div className="flex relative items-center">
                           <MdOutlineLock className="absolute left-3" />
                           <Input
-                            className="pl-10"
+                            className="pl-10 text-sm"
                             placeholder="Password"
+                            type={showPassword ? "text" : "password"}
                             {...field}
                           />
+                          <button
+                            type="button"
+                            className="absolute right-3 focus:outline-none text-sm"
+                            onClick={() => {
+                              setShowPassword(!showPassword);
+                            }}
+                          >
+                            {showPassword ? (
+                              <MdOutlineVisibility />
+                            ) : (
+                              <MdOutlineVisibilityOff />
+                            )}
+                          </button>
                         </div>
                       </FormControl>
                       <FormMessage className="text-center font-bold text-xs bg-white" />
@@ -152,7 +175,7 @@ const LoginCard = () => {
               <Button
                 type="submit"
                 disabled={isAuthenticating}
-                className="w-full"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <p>Masuk</p>
               </Button>
@@ -160,48 +183,57 @@ const LoginCard = () => {
           </Form>
           <div className="flex items-center">
             <div className="border-t mr-[10px] flex-1" />
-            <p>atau login dengan</p>
+            <p className="text-sm">atau login dengan</p>
             <div className="border-t ml-[10px] flex-1" />
           </div>
-          <div className="flex flex-col space-y-3">
+
+          {/* tombol via sosmed */}
+          <div className="flex space-x-3 justify-center ">
+            {/* Google */}
             <Button
               disabled={isAuthenticating}
               onClick={() => socialAuth("google")}
               variant={"outline"}
-              className=""
+              className="flex hover:bg-blue-100 text-xs -space-x-1"
             >
-              <FcGoogle />
-              <p>Login dengan Google</p>
+              <FcGoogle size={100} />
+              <p className="hidden md:block ">Google</p>
             </Button>
+            {/* Twitter */}
             <Button
               disabled={isAuthenticating}
               onClick={() => socialAuth("facebook")}
               variant={"outline"}
-              className=""
+              className=" hover:bg-blue-100 text-xs -space-x-1"
+            >
+              <FaXTwitter className="text-black-600" />
+              <p className="hidden md:block">Twitter/X</p>
+            </Button>
+            {/* Facebook */}
+            <Button
+              disabled={isAuthenticating}
+              onClick={() => socialAuth("facebook")}
+              variant={"outline"}
+              className=" hover:bg-blue-100 text-xs -space-x-1"
             >
               <FaFacebookSquare className="text-blue-600" />
-              <p>Login dengan Facebook</p>
+              <p className="hidden md:block">Facebook</p>
             </Button>
           </div>
-          <div>
+          <div className="flex justify-center">
             <p className="text-xs text-muted-foreground">
               Belum punya akun?{" "}
-              <span className="cursor-pointer text-blue-500 hover:underline">
+              <span className="cursor-pointer text-blue-500 hover:underline font-bold">
                 Daftar
               </span>
             </p>
           </div>
         </CardContent>
+      </Card>
+      <div className="flex justify-center mt-2 text-xs font-mono">
+        <p>Copyright &copy; {new Date().getFullYear()} Braling Print Studio</p>
       </div>
-      <div className="hidden md:block w-1/2 mx-3">
-        <div className="flex flex-col h-full items-center justify-center space-y-5">
-          This image sections
-          <p className="text-center text-sm italic">
-            Merdeka menyediakan layanan service dan jual beli komputer.
-          </p>
-        </div>
-      </div>
-    </Card>
+    </>
   );
 };
 

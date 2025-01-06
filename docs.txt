@@ -26,3 +26,4 @@ Step by step membuat project ini
       - selesai atur login via google dan facebook dan SUKSES!
       - ******* TIDAK SETTING LOGIN VIA EMAIL DULU, KARENA TERLALU RUMIT *******
     > Membuat table sql di supabase >> dashboard >> SQL Editor >> ketik kode SQL (sudah aku tulis sendiri format sql supabase ke file sql.text di root)
+    > Atur session (jika sudah login otomatis ke dashboard) dengan function isLogin & setIsLogin

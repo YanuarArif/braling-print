@@ -1,0 +1,2 @@
+Dependensi Penting yang diinstall di project ini:
+- Preline UI

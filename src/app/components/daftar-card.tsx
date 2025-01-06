@@ -37,15 +37,15 @@ const DaftarCard = () => {
   // cek session login
 
   // form schema from zod
-  const formScrema = z.object({
+  const formschema = z.object({
     email: z.string().email({ message: "Email tidak valid" }),
     password: z
       .string()
       .min(1, { message: "Password wajib diisi" })
       .min(6, "Password minimal 6 karakter"),
   });
-  const form = useForm<z.infer<typeof formScrema>>({
-    resolver: zodResolver(formScrema),
+  const form = useForm<z.infer<typeof formschema>>({
+    resolver: zodResolver(formschema),
     defaultValues: {
       email: "",
       password: "",
@@ -53,7 +53,7 @@ const DaftarCard = () => {
   });
 
   // fungsi untuk submit form
-  async function onSubmit(values: z.infer<typeof formScrema>) {
+  async function onSubmit(values: z.infer<typeof formschema>) {
     // setLoading(true);
     setError(null);
     console.log(values);
