@@ -1,14 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
 import { VscAccount } from "react-icons/vsc";
-import { MdOutlineLock } from "react-icons/md";
+import {
+  MdOutlineLock,
+  MdOutlineVisibility,
+  MdOutlineVisibilityOff,
+} from "react-icons/md";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supabaseBrowserClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 import {
   Card,
@@ -24,156 +28,231 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { SignInFlow } from "../types/auth";
+import { useEffect, useState } from "react";
 // import { useRouter } from "next/navigation";
 
+// interface DaftarCardProps {
+//   setLogin: (login: SignInFlow) => void;
+// }
+
 const DaftarCard = () => {
-  // fungsi untuk registrasi via email
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // const [isLogin, setIsLogin] = useState(false);
-  // const router = useRouter();
-
-  // cek session login
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showMessage, setShowMessage] = useState(true);
 
   // form schema from zod
-  const formschema = z.object({
-    email: z.string().email({ message: "Email tidak valid" }),
-    password: z
-      .string()
-      .min(1, { message: "Password wajib diisi" })
-      .min(6, "Password minimal 6 karakter"),
-  });
+  const formschema = z
+    .object({
+      email: z.string().email({ message: "Email tidak valid" }),
+      password: z
+        .string()
+        .min(1, { message: "Password wajib diisi" })
+        .min(6, "Password minimal 6 karakter"),
+      confirmPassword: z
+        .string()
+        .min(1, { message: "Konfirmasi password wajib diisi" }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Password tidak cocok",
+      path: ["confirmPassword"],
+    });
   const form = useForm<z.infer<typeof formschema>>({
     resolver: zodResolver(formschema),
     defaultValues: {
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  // fungsi untuk submit form
-  async function onSubmit(values: z.infer<typeof formschema>) {
-    // setLoading(true);
-    setError(null);
-    console.log(values);
-
-    try {
-      const { error } = await supabaseBrowserClient.auth.signUp({
-        email: values.email,
-        password: values.password,
-      });
-
-      if (error) {
-        setError(error.message);
-      } else {
-        alert("Cek email anda untuk verifikasi");
-        form.reset();
+  useEffect(() => {
+    // Watch for changes in form errors
+    const subscription = form.watch(() => {
+      if (Object.keys(form.formState.errors).length > 0) {
+        setShowMessage(true);
+        const timer = setTimeout(() => setShowMessage(false), 3000);
+        return () => clearTimeout(timer);
       }
-    } catch (err: any) {
-      setError(err.message || "Terjadi kesalahan");
-    } finally {
-      // setLoading(false);
-    }
-  }
-  // fungsi untuk supabase OAuth
-  // async function socialAuth(provider: Provider) {
-  //   setIsAuthenticating(true);
-  //   await supabaseBrowserClient.auth.signInWithOAuth({
-  //     provider,
-  //     options: {
-  //       redirectTo: `${location.origin}/login/callback`,
-  //     },
-  //   });
-  //   setIsAuthenticating(false);
-  // }
+    });
 
-  // if (!isLogin) return null;
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  const onSubmit = (data: z.infer<typeof formschema>) => {
+    console.log(data);
+  };
 
   return (
-    <Card className="w-full h-full md:flex">
-      <div className="md:w-1/2">
-        <CardHeader className="flex items-center">
-          <CardTitle>Selamat Datang</CardTitle>
-          <CardDescription>
-            Silahkan login untuk membuat pesanan
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-              <div className="relative overflow-visible">
-                <FormField
-                  // disabled={loading}
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex relative items-center">
-                          <VscAccount className="absolute left-3" />
-                          <Input
-                            className="pl-10"
-                            placeholder="Email"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage className="text-center top-10 font-bold text-xs bg-white" />
-                    </FormItem>
-                  )}
-                ></FormField>
-              </div>
-              <div className="relative">
-                <FormField
-                  // disabled={loading}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex relative items-center">
-                          <MdOutlineLock className="absolute left-3" />
-                          <Input
-                            className="pl-10"
-                            placeholder="Password"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage className="text-center font-bold text-xs bg-white" />
-                    </FormItem>
-                  )}
-                ></FormField>
-              </div>
-              {error && <div className="text-red-500">{error}</div>}
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading ? "Registering..." : "Register"}
-              </Button>
-            </form>
-          </Form>
-          <div className="flex items-center">
-            <div className="border-t mr-[10px] flex-1" />
+    <Card className="w-full h-full">
+      <CardHeader className="flex items-center text-center">
+        <CardTitle className="text-3xl lg:text-4xl font-bold">
+          Selamat Datang
+        </CardTitle>
+        <CardDescription className="text-lg font-light">
+          Silahkan daftar untuk bisa mengakses akun.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Email Form */}
+            <div className="relative">
+              <FormField
+                // disabled={isAuthenticating}
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex relative items-center">
+                        <VscAccount className="absolute left-3" />
+                        <Input
+                          className={`pl-10 text-base md:text-lg h-12 
+                            ${
+                              form.formState.errors.email
+                                ? "border-red-300 focus-visible:ring-red-300"
+                                : ""
+                            }`}
+                          placeholder="Email"
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    {showMessage && (
+                      <FormMessage
+                        className="absolute pt-1 pl-1 text-center top-10 font-bold text-xs
+                          transform transition-all duration-300 ease-in-out
+                          animate-in slide-in-from-top-1"
+                      />
+                    )}
+                  </FormItem>
+                )}
+              ></FormField>
+            </div>
+            {/* Password Form */}
+            <div className="relative">
+              <FormField
+                // disabled={isAuthenticating}
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex relative items-center">
+                        <MdOutlineLock className="absolute left-3" />
+                        <Input
+                          className={`pl-10 text-base md:text-lg h-12 
+                              ${
+                                form.formState.errors.password
+                                  ? "border-red-300 focus-visible:ring-red-300"
+                                  : ""
+                              }`}
+                          placeholder="Password"
+                          type={showPassword ? "text" : "password"}
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-3 focus:outline-none text-sm"
+                          onClick={() => {
+                            setShowPassword(!showPassword);
+                          }}
+                        >
+                          {showPassword ? (
+                            <MdOutlineVisibility />
+                          ) : (
+                            <MdOutlineVisibilityOff />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    {showMessage && (
+                      <FormMessage
+                        className="absolute pt-1 pl-1 text-center top-10 font-bold text-xs
+                          transform transition-all duration-300 ease-in-out
+                          animate-in slide-in-from-top-1"
+                      />
+                    )}
+                  </FormItem>
+                )}
+              ></FormField>
+            </div>
+            {/* Konfirmasi Password */}
+            <div className="relative">
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex relative items-center">
+                        <MdOutlineLock className="absolute left-3" />
+                        <Input
+                          className={`pl-10 text-base md:text-lg h-12 
+                            ${
+                              form.formState.errors.confirmPassword
+                                ? "border-red-300 focus-visible:ring-red-300"
+                                : ""
+                            }`}
+                          placeholder="Konfirmasi Password"
+                          type={showConfirmPassword ? "text" : "password"}
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-3 focus:outline-none text-sm"
+                          onClick={() => {
+                            setShowConfirmPassword(!showConfirmPassword);
+                          }}
+                        >
+                          {showConfirmPassword ? (
+                            <MdOutlineVisibility />
+                          ) : (
+                            <MdOutlineVisibilityOff />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    {showMessage && (
+                      <FormMessage
+                        className="absolute pt-1 pl-1 text-center top-10 font-bold text-xs
+                          transform transition-all duration-300 ease-in-out
+                          animate-in slide-in-from-top-1"
+                      />
+                    )}
+                  </FormItem>
+                )}
+              ></FormField>
+            </div>
+            {/* Tombol Daftar */}
+            <Button
+              type="submit"
+              disabled={isAuthenticating}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white h-10"
+            >
+              <p className="text-base">Daftar</p>
+            </Button>
+          </form>
+        </Form>
+        <div className="flex items-center">
+          <div className="border-t mr-[10px] flex-1" />
 
-            <div className="border-t ml-[10px] flex-1" />
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">
-              Belum punya akun?{" "}
-              <span className="cursor-pointer text-blue-500 hover:underline">
-                Daftar
-              </span>
-            </p>
-          </div>
-        </CardContent>
-      </div>
-      <div className="hidden md:block w-1/2 mx-3">
-        <div className="flex flex-col h-full items-center justify-center space-y-5">
-          This image sections
-          <p className="text-center text-sm italic">
-            Merdeka menyediakan layanan service dan jual beli komputer.
+          <div className="border-t ml-[10px] flex-1" />
+        </div>
+        <div>
+          <p className="text-sm text-muted-foreground">
+            Sudah punya akun?{" "}
+            <Link
+              href="/login"
+              className="cursor-pointer font-bold text-blue-500 hover:underline"
+            >
+              Login
+            </Link>
           </p>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 };

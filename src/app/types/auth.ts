@@ -1,1 +1,1 @@
-export type LoginFlow = "masuk" | "daftar";
+export type SignInFlow = "signIn" | "signUp";

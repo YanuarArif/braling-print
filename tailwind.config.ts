@@ -20,6 +20,7 @@ export default {
     extend: {
       backgroundImage: {
         "bg-street": "url('/img/street.svg')",
+        "bg-braling-banner": "url('/img/Braling-Print-Studio.png')",
       },
       colors: {
         background: "hsl(var(--background))",

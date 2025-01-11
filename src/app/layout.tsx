@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
+import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
+import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import "./globals.css";
 
 const rubik = Rubik({
@@ -18,8 +20,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={rubik.className}>{children}</body>
-    </html>
+    <ConvexAuthNextjsServerProvider>
+      <html lang="en">
+        <body className={rubik.className}>
+          <ConvexClientProvider>{children}</ConvexClientProvider>
+        </body>
+      </html>
+    </ConvexAuthNextjsServerProvider>
   );
 }
