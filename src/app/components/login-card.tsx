@@ -10,7 +10,7 @@ import {
   MdOutlineVisibility,
   MdOutlineVisibilityOff,
 } from "react-icons/md";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,7 @@ import { SignInFlow } from "../types/auth";
 // }
 
 const LoginCard = () => {
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showMessage, setShowMessage] = useState(true);
   // const [isLogin, setIsLogin] = useState(false);
@@ -87,7 +87,8 @@ const LoginCard = () => {
   const handleProvider = (
     value: "google" | "facebook" | "twitter" | "github"
   ) => {
-    signIn(value);
+    setIsPending(true);
+    signIn(value).finally(() => setIsPending(false));
   };
 
   return (
@@ -190,8 +191,8 @@ const LoginCard = () => {
               </div>
               {/* Tombol Masuk */}
               <Button
+                disabled={isPending}
                 type="submit"
-                disabled={isAuthenticating}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white h-10"
               >
                 <p className="text-base">Masuk</p>
@@ -209,8 +210,8 @@ const LoginCard = () => {
             <div className="flex space-x-3 justify-center ">
               {/* Google */}
               <Button
+                disabled={isPending}
                 onClick={() => handleProvider("google")}
-                disabled={isAuthenticating}
                 variant={"outline"}
                 className="flex hover:bg-blue-100 text-xs -space-x-1"
               >
@@ -219,8 +220,8 @@ const LoginCard = () => {
               </Button>
               {/* Twitter */}
               <Button
+                disabled={isPending}
                 onClick={() => handleProvider("github")}
-                disabled={isAuthenticating}
                 variant={"outline"}
                 className=" hover:bg-blue-100 text-xs -space-x-1"
               >
@@ -229,8 +230,8 @@ const LoginCard = () => {
               </Button>
               {/* Facebook */}
               <Button
+                disabled={isPending}
                 onClick={() => handleProvider("facebook")}
-                disabled={isAuthenticating}
                 variant={"outline"}
                 className=" hover:bg-blue-100 text-xs -space-x-1"
               >
