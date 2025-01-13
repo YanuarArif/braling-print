@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-// The client you created from the Server-Side Auth instructions
 import { createClient } from "@/app/utils/supabase/server";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 
 export async function GET(request: Request) {
   try {
@@ -8,11 +9,20 @@ export async function GET(request: Request) {
     const code = searchParams.get("code");
     const next = searchParams.get("next") ?? "/";
 
-    // Add more detailed environment debugging
+    // Ensure proper URL format
+    let supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+    if (!supabaseUrl.endsWith("/")) {
+      supabaseUrl += "/";
+    }
+
+    // Clean up anon key (remove any whitespace)
+    const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
+
+    // Debug environment
     console.log("Detailed Environment check:", {
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-      // Log only first few characters of the key for security
-      anonKeyPrefix: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 6),
+      supabaseUrl,
+      anonKeyLength: anonKey.length,
+      anonKeyPrefix: anonKey.substring(0, 6),
       environment: process.env.NODE_ENV,
     });
 
@@ -21,9 +31,15 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${origin}/auth/auth-code-error`);
     }
 
-    const supabase = await createClient();
+    // Override createClient with corrected URL
+    const supabase = createServerComponentClient(
+      { cookies },
+      {
+        supabaseUrl,
+        supabaseKey: anonKey,
+      }
+    );
 
-    // Log the attempt to exchange code
     console.log("Attempting to exchange code for session");
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
@@ -33,7 +49,7 @@ export async function GET(request: Request) {
         message: error.message,
         status: error.status,
         name: error.name,
-        url: process.env.NEXT_PUBLIC_SUPABASE_URL, // Log the full URL being used
+        urlUsed: supabaseUrl,
       });
       return NextResponse.redirect(`${origin}/auth/auth-code-error`);
     }
