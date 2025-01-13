@@ -94,6 +94,17 @@ const LoginCard = () => {
     });
   }
 
+  // Check session and redirect to /dashboard if logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabaseBrowserClient.auth.getSession();
+      if (data.session) {
+        router.push("/dashboard");
+      }
+    };
+    checkSession();
+  }, [router, supabaseBrowserClient]);
+
   return (
     <>
       <Card className="w-full h-full py-5 shadow-md">
