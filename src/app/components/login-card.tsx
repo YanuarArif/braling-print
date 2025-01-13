@@ -85,13 +85,24 @@ const LoginCard = () => {
   };
 
   async function socialAuth(provider: Provider) {
-    setIsPending(true);
-    await supabaseBrowserClient.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    try {
+      setIsPending(true);
+      await supabaseBrowserClient.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          skipBrowserRedirect: false,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Social auth error:", error);
+    } finally {
+      setIsPending(false);
+    }
   }
 
   // Check session and redirect to /dashboard if logged in
