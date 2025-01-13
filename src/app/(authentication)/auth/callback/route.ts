@@ -8,10 +8,11 @@ export async function GET(request: Request) {
     const code = searchParams.get("code");
     const next = searchParams.get("next") ?? "/";
 
-    // Debug environment variables (will be visible in Vercel logs)
-    console.log("Environment check:", {
-      hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-      hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    // Add more detailed environment debugging
+    console.log("Detailed Environment check:", {
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+      // Log only first few characters of the key for security
+      anonKeyPrefix: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 6),
       environment: process.env.NODE_ENV,
     });
 
@@ -32,6 +33,7 @@ export async function GET(request: Request) {
         message: error.message,
         status: error.status,
         name: error.name,
+        url: process.env.NEXT_PUBLIC_SUPABASE_URL, // Log the full URL being used
       });
       return NextResponse.redirect(`${origin}/auth/auth-code-error`);
     }
