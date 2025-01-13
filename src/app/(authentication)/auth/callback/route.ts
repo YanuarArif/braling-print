@@ -8,16 +8,31 @@ export async function GET(request: Request) {
     const code = searchParams.get("code");
     const next = searchParams.get("next") ?? "/";
 
+    // Debug environment variables (will be visible in Vercel logs)
+    console.log("Environment check:", {
+      hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      environment: process.env.NODE_ENV,
+    });
+
     if (!code) {
       console.error("No code provided in callback");
       return NextResponse.redirect(`${origin}/auth/auth-code-error`);
     }
 
     const supabase = await createClient();
+
+    // Log the attempt to exchange code
+    console.log("Attempting to exchange code for session");
+
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
-      console.error("Supabase auth error:", error.message);
+      console.error("Detailed auth error:", {
+        message: error.message,
+        status: error.status,
+        name: error.name,
+      });
       return NextResponse.redirect(`${origin}/auth/auth-code-error`);
     }
 
@@ -32,7 +47,7 @@ export async function GET(request: Request) {
 
     return NextResponse.redirect(`${origin}`);
   } catch (error) {
-    console.error("Callback route error:", error);
+    console.error("Detailed callback error:", error);
     return NextResponse.redirect(`${origin}/auth/auth-code-error`);
   }
 }
