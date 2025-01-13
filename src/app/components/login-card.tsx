@@ -33,7 +33,7 @@ import { useRouter } from "next/navigation";
 import { FaXTwitter } from "react-icons/fa6";
 import { SignInFlow } from "../types/auth";
 import { Provider } from "@supabase/supabase-js";
-import { createBrowserClient } from "@/app/utils/supabase/client";
+import supabase from "../utils/supabase/client";
 // import { useRouter } from "next/navigation";
 
 // interface LoginCardProps {
@@ -41,7 +41,6 @@ import { createBrowserClient } from "@/app/utils/supabase/client";
 // }
 
 const LoginCard = () => {
-  const supabaseBrowserClient = createBrowserClient();
   const [isPending, setIsPending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showMessage, setShowMessage] = useState(true);
@@ -86,7 +85,7 @@ const LoginCard = () => {
 
   async function socialAuth(provider: Provider) {
     setIsPending(true);
-    await supabaseBrowserClient.auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
@@ -97,13 +96,13 @@ const LoginCard = () => {
   // Check session and redirect to /dashboard if logged in
   useEffect(() => {
     const checkSession = async () => {
-      const { data } = await supabaseBrowserClient.auth.getSession();
+      const { data } = await supabase.auth.getSession();
       if (data.session) {
         router.push("/dashboard");
       }
     };
     checkSession();
-  }, [router, supabaseBrowserClient]);
+  }, [router]);
 
   return (
     <>
