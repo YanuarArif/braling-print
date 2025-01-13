@@ -1,22 +1,33 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
-import { useAuthActions } from "@convex-dev/auth/react";
-import React from "react";
+import { createClient } from "../utils/supabase/server";
+import { redirect } from "next/navigation";
 
-const Dashboard = () => {
-  const { signOut } = useAuthActions();
+async function Dashboard() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user) {
+    redirect("/login");
+  }
+
+  const handleLogout = async () => {
+    "use server";
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+    redirect("/login");
+  };
 
   return (
     <>
       <div className="h-full flex flex-col justify-center items-center">
         Dashboard
         <div>
-          <Button onClick={() => signOut()}>Logout</Button>
+          <form action={handleLogout}>
+            <Button>Logout</Button>
+          </form>
         </div>
       </div>
     </>
   );
-};
+}
 
 export default Dashboard;

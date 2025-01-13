@@ -14,7 +14,6 @@ import { set, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 import {
   Card,
@@ -32,8 +31,9 @@ import {
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { FaXTwitter } from "react-icons/fa6";
-import { useAuthActions } from "@convex-dev/auth/react";
 import { SignInFlow } from "../types/auth";
+import { Provider } from "@supabase/supabase-js";
+import { createBrowserClient } from "@/app/utils/supabase/client";
 // import { useRouter } from "next/navigation";
 
 // interface LoginCardProps {
@@ -41,11 +41,11 @@ import { SignInFlow } from "../types/auth";
 // }
 
 const LoginCard = () => {
+  const supabaseBrowserClient = createBrowserClient();
   const [isPending, setIsPending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showMessage, setShowMessage] = useState(true);
   // const [isLogin, setIsLogin] = useState(false);
-  const { signIn } = useAuthActions();
   const router = useRouter();
 
   // cek session login
@@ -84,12 +84,15 @@ const LoginCard = () => {
     console.log(data);
   };
 
-  const handleProvider = (
-    value: "google" | "facebook" | "twitter" | "github"
-  ) => {
+  async function socialAuth(provider: Provider) {
     setIsPending(true);
-    signIn(value).finally(() => setIsPending(false));
-  };
+    await supabaseBrowserClient.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+  }
 
   return (
     <>
@@ -211,7 +214,7 @@ const LoginCard = () => {
               {/* Google */}
               <Button
                 disabled={isPending}
-                onClick={() => handleProvider("google")}
+                onClick={() => socialAuth("google")}
                 variant={"outline"}
                 className="flex hover:bg-blue-100 text-xs -space-x-1"
               >
@@ -221,7 +224,6 @@ const LoginCard = () => {
               {/* Twitter */}
               <Button
                 disabled={isPending}
-                onClick={() => handleProvider("github")}
                 variant={"outline"}
                 className=" hover:bg-blue-100 text-xs -space-x-1"
               >
@@ -231,7 +233,6 @@ const LoginCard = () => {
               {/* Facebook */}
               <Button
                 disabled={isPending}
-                onClick={() => handleProvider("facebook")}
                 variant={"outline"}
                 className=" hover:bg-blue-100 text-xs -space-x-1"
               >
