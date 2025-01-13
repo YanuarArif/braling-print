@@ -6,6 +6,3 @@ export function createBrowserClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 }
-
-console.log("Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
-console.log("Supabase ANON Key:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);

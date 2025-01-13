@@ -8,6 +8,7 @@ export async function GET(request: Request) {
   const next = searchParams.get("next") ?? "/dashboard";
 
   console.log("OAuth Code:", code);
+  console.log("Supabase API Key: ", process.env.SUPABASE_API_KEY);
 
   if (code) {
     try {
