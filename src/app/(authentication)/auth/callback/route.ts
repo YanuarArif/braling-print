@@ -1,62 +1,30 @@
 import { NextResponse } from "next/server";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+// The client you created from the Server-Side Auth instructions
+import { createClient } from "@/app/utils/supabase/server";
 
 export async function GET(request: Request) {
-  try {
-    const requestUrl = new URL(request.url);
-    const { searchParams, origin } = requestUrl;
-    const code = searchParams.get("code");
-    const next = searchParams.get("next") ?? "/";
+  const { searchParams, origin } = new URL(request.url);
+  const code = searchParams.get("code");
+  // if "next" is in param, use it as the redirect URL
+  const next = searchParams.get("next") ?? "/dashboard";
 
-    // Get cookie store
-    const cookieStore = cookies();
-
-    let supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-    if (!supabaseUrl.endsWith("/")) {
-      supabaseUrl += "/";
-    }
-    const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
-
-    // Create client with cookie store
-    const supabase = createServerComponentClient(
-      { cookies: () => cookieStore },
-      {
-        supabaseUrl,
-        supabaseKey: anonKey,
-      }
-    );
-
-    if (!code) {
-      console.error("No code provided in callback");
-      return NextResponse.redirect(`${origin}/auth/auth-code-error`);
-    }
-
-    console.log("Attempting to exchange code for session");
-
+  if (code) {
+    const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-
-    if (error) {
-      console.error("Auth error details:", {
-        message: error.message,
-        status: error.status,
-        name: error.name,
-        code: code?.substring(0, 6) + "...",
-        cookiesExist: (await cookieStore).getAll().length > 0,
-      });
-
-      // If we get a PKCE error, redirect to sign in
-      if (error.message.includes("code challenge")) {
-        return NextResponse.redirect(`${origin}/auth/signin`);
+    if (!error) {
+      const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
+      const isLocalEnv = process.env.NODE_ENV === "development";
+      if (isLocalEnv) {
+        // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
+        return NextResponse.redirect(`${origin}${next}`);
+      } else if (forwardedHost) {
+        return NextResponse.redirect(`https://${forwardedHost}${next}`);
+      } else {
+        return NextResponse.redirect(`${origin}$`);
       }
-
-      return NextResponse.redirect(`${origin}/auth/auth-code-error`);
     }
-
-    // Successful authentication
-    return NextResponse.redirect(`${origin}${next}`);
-  } catch (error) {
-    console.error("Callback error:", error);
-    return NextResponse.redirect(`${origin}/auth/auth-code-error`);
   }
+
+  // return the user to an error page with instructions
+  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }
