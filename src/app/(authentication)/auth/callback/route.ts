@@ -1,42 +1,28 @@
 import { NextResponse } from "next/server";
-// The client you created from the Server-Side Auth instructions
 import { createClient } from "@/app/utils/supabase/server";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
-
-  console.log("OAuth Code:", code);
-  console.log("Supabase API Key: ", process.env.SUPABASE_API_KEY);
+  const next = searchParams.get("next") ?? "/";
 
   if (code) {
-    try {
-      const supabase = await createClient();
-      console.log("Supabase Client Initialized:", !!supabase);
+    const supabase = await createClient();
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
-      console.log("Exchange Code Result:", error);
+    if (!error) {
+      const host = request.headers.get("host"); // Use the host header
+      const protocol =
+        process.env.NODE_ENV === "development" ? "http" : "https"; // Determine protocol
 
-      if (!error) {
-        const forwardedHost = request.headers.get("x-forwarded-host");
-        const isLocalEnv = process.env.NODE_ENV === "development";
+      // Construct the full redirect URL
+      const redirectUrl = `${protocol}://${host}${next}`;
 
-        if (isLocalEnv) {
-          return NextResponse.redirect(`${origin}${next}`);
-        } else if (forwardedHost) {
-          return NextResponse.redirect(`https://${forwardedHost}${next}`);
-        } else {
-          return NextResponse.redirect(`${origin}`);
-        }
-      } else {
-        console.error("Exchange Code Error:", error);
-      }
-    } catch (err) {
-      console.error("Unexpected Error:", err);
+      return NextResponse.redirect(redirectUrl);
     }
   }
 
-  console.error("Invalid Code or Exchange Failed");
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
+  const host = request.headers.get("host");
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  return NextResponse.redirect(`${protocol}://${host}/auth/auth-code-error`);
 }
