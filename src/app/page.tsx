@@ -10,7 +10,7 @@ export default function Home() {
 
   return (
     <main className="flex">
-      <div className="w-full h-full">
+      <div className="w-full h-full pt-16">
         <HalamanDepan />
       </div>
     </main>
