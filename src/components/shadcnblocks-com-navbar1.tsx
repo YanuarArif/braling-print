@@ -1,3 +1,4 @@
+import React from "react";
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
 
 import {
@@ -22,6 +23,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { JSX } from "react/jsx-runtime";
 
 interface MenuItem {
   title: string;
