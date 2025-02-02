@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
 import "./globals.css";
-import { ConvexClientProvider } from "./provider/ConvexClerkProvider";
+import Navbar from "./components/navbar";
 
 const rubik = Rubik({
   subsets: ["latin"],
@@ -19,10 +19,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ConvexClientProvider>
-      <html lang="en">
-        <body className={rubik.className}>{children}</body>
-      </html>
-    </ConvexClientProvider>
+    <html lang="en">
+      <body className={rubik.className}>
+        <Navbar />
+        {children}
+      </body>
+    </html>
   );
 }
