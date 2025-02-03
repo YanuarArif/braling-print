@@ -57,7 +57,7 @@ interface Navbar1Props {
   };
 }
 
-const Navbar1 = ({
+const NavbarUi = ({
   logo = {
     url: "http://localhost:3000",
     src: "/img/Braling-Print-Studio.png",
@@ -143,7 +143,7 @@ const Navbar1 = ({
   },
 }: Navbar1Props) => {
   return (
-    <section className="py-4 mx-10 lg:mx-20">
+    <div className="py-4 mx-10 lg:mx-20">
       <div className="container">
         <nav className="hidden xl:flex items-center">
           {" "}
@@ -242,7 +242,7 @@ const Navbar1 = ({
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
@@ -329,4 +329,4 @@ const renderMobileMenuItem = (item: MenuItem) => {
   );
 };
 
-export { Navbar1 };
+export { NavbarUi };

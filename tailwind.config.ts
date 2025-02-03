@@ -16,7 +16,6 @@ export default {
       xl: "1280px",
       "2xl": "1536px",
     },
-
     extend: {
       container: {
         center: true,
@@ -28,9 +27,23 @@ export default {
           "2xl": "6rem",
         },
       },
+      maxWidth: {
+        container: "1280px",
+      },
+      animation: {
+        marquee: "marquee var(--duration) linear infinite",
+      },
+      keyframes: {
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(calc(-100% - var(--gap)))" },
+        },
+      },
       backgroundImage: {
-        "bg-street": "url('/img/street.svg')",
-        "bg-braling-banner": "url('/img/Braling-Print-Studio.png')",
+        // 'bg-street': 'url('/img/street.svg')',
+        // 'bg-braling-banner': 'url('/img/Braling-Print-Studio.png')',
+        // 'grid-pattern': ',
+        // 'grid-pattern-light': '
       },
       colors: {
         background: "hsl(var(--background))",

@@ -5,6 +5,8 @@ import CategoryCarousel from "./small-comp/category-carousel";
 import { categories, items } from "../data/carousel-index";
 import NewProductCarousel from "./small-comp/newproduct-carousel";
 import Footer from "./footer";
+import { TestimonialsUi } from "@/components/testimonials-with-marquee";
+import { testimonials } from "../data/testimonials-data";
 
 const HalamanDepan = () => {
   return (
@@ -29,9 +31,19 @@ const HalamanDepan = () => {
         />
       </section>
       <section className="container my-3">
+        <TestimonialsUi
+          title="What Our Customers Are Saying"
+          description="Read why our customers love our products and services."
+          testimonials={testimonials}
+          className="mt-10" // Optional className for styling
+        />
+      </section>
+      <section className="container my-3">
         <p>Section selanjutnya</p>
       </section>
-      <Footer />
+      <footer>
+        <Footer />
+      </footer>
     </main>
   );
 };
