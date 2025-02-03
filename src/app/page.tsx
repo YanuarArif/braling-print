@@ -9,7 +9,7 @@ export default function Home() {
   const route = useRouter();
 
   return (
-    <main className="flex">
+    <main className="flex h-full">
       <div className="w-full h-full pt-16">
         <HalamanDepan />
       </div>

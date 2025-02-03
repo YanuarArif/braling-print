@@ -26,7 +26,7 @@ const Carousel = () => {
         {" "}
         {/* Ubah items-center md:items-start menjadi md:items-end */}
         {/* Text Section - Stacked above on mobile, bottom aligned on desktop */}
-        <div className="w-full md:w-1/4 pr-0 md:pr-8 text-gray-700 mb-6 md:mb-0 text-center md:text-left">
+        <div className="w-full md:w-1/4 pr-0 md:pr-8 text-gray-700 mb-6 md:mb-2 text-center md:text-left">
           {" "}
           {/* Tetap mb-6 untuk mobile, hapus md:mb-0 */}
           <h2 className="text-xl md:text-2xl font-bold mb-2 md:mb-4">

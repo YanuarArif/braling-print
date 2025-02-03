@@ -1,16 +1,21 @@
 import React from "react";
 import ThemeSwitcher from "./theme-switcher";
 import Carousel from "./small-comp/carousel";
+import CategoryCarousel from "./small-comp/category-carousel";
+import { categories, items } from "../data/carousel-index";
 
 const HalamanDepan = () => {
   return (
-    <main className="flex mx-10 lg:mx-20 my-10">
+    <main className="flex flex-col my-10 gap-6 h-full">
       <div className="absolute bottom-5 left-5">
         <ThemeSwitcher />
       </div>
-      <div className="w-full ">
+      <section className="container z-10">
         <Carousel />
-      </div>
+      </section>
+      <section className="container">
+        <CategoryCarousel categories={categories} items={items} />
+      </section>
     </main>
   );
 };

@@ -19,10 +19,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={rubik.className}>
-        <Navbar />
-        {children}
+    <html lang="en" className="h-full">
+      <body className={`${rubik.className} h-full`}>
+        <div className="w-full z-50">
+          <Navbar />
+        </div>
+        <div className="z-10 h-full">{children}</div>
       </body>
     </html>
   );

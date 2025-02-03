@@ -12,8 +12,8 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
+  NavigationMenuLink,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import {
@@ -130,10 +130,6 @@ const Navbar1 = ({
       title: "Pricing",
       url: "#",
     },
-    {
-      title: "Blog",
-      url: "#",
-    },
   ],
   mobileExtraLinks = [
     { name: "Press", url: "#" },
@@ -147,14 +143,15 @@ const Navbar1 = ({
   },
 }: Navbar1Props) => {
   return (
-    <section className="py-4">
+    <section className="py-4 mx-10 lg:mx-20">
       <div className="container">
-        <nav className="hidden justify-between lg:flex">
-          <div className="flex items-center gap-6">
-            <a href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="w-8" alt={logo.alt} />
-              <span className="text-lg font-semibold">{logo.title}</span>
-            </a>
+        <nav className="hidden xl:flex items-center">
+          {" "}
+          {/* Hapus justify-between */}
+          {/* Menu di kiri */}
+          <div className="flex justify-start flex-1">
+            {" "}
+            {/* Tambah flex-1 untuk memenuhi ruang */}
             <div className="flex items-center">
               <NavigationMenu>
                 <NavigationMenuList>
@@ -163,16 +160,31 @@ const Navbar1 = ({
               </NavigationMenu>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
-              <a href={auth.login.url}>{auth.login.text}</a>
-            </Button>
-            <Button asChild size="sm">
-              <a href={auth.signup.url}>{auth.signup.text}</a>
-            </Button>
+          {/* Logo di tengah */}
+          <div className="flex justify-center">
+            {" "}
+            {/* justify-center untuk tengah */}
+            <a href={logo.url} className="flex items-center gap-2">
+              <img src={logo.src} className="w-8" alt={logo.alt} />
+              <span className="text-lg font-semibold">{logo.title}</span>
+            </a>
+          </div>
+          {/* Auth buttons di kanan */}
+          <div className="flex justify-end flex-1">
+            {" "}
+            {/* Tambah flex-1 untuk memenuhi ruang */}
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm">
+                <a href={auth.login.url}>{auth.login.text}</a>
+              </Button>
+              <Button asChild size="sm">
+                <a href={auth.signup.url}>{auth.signup.text}</a>
+              </Button>
+            </div>
           </div>
         </nav>
-        <div className="block lg:hidden">
+        {/* Menu Mobile */}
+        <div className="block xl:hidden">
           <div className="flex items-center justify-between">
             <a href={logo.url} className="flex items-center gap-2">
               <img src={logo.src} className="w-8" alt={logo.alt} />
