@@ -4,13 +4,14 @@ import Carousel from "./small-comp/carousel";
 import CategoryCarousel from "./small-comp/category-carousel";
 import { categories, items } from "../data/carousel-index";
 import NewProductCarousel from "./small-comp/newproduct-carousel";
+import Footer from "./footer";
 
 const HalamanDepan = () => {
   return (
     <main className="flex flex-col gap-6 h-full">
-      <div className="absolute bottom-5 left-5">
+      {/* <div className="absolute bottom-5 left-5">
         <ThemeSwitcher />
-      </div>
+      </div> */}
       <section className="container my-3 mt-5">
         <Carousel />
       </section>
@@ -30,6 +31,7 @@ const HalamanDepan = () => {
       <section className="container my-3">
         <p>Section selanjutnya</p>
       </section>
+      <Footer />
     </main>
   );
 };

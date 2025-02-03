@@ -41,15 +41,15 @@ const NewProductCarousel = ({
       <div className="relative">
         <div className="mx-auto">
           <Swiper
-            slidesPerView={4.5}
+            slidesPerView={4.3}
             spaceBetween={20}
             modules={[Pagination]}
             pagination={{ clickable: true }}
             breakpoints={{
-              320: { slidesPerView: 1.5 },
-              640: { slidesPerView: 2.5 },
-              1024: { slidesPerView: 3.5 },
-              1280: { slidesPerView: 4.5 },
+              320: { slidesPerView: 1.3 },
+              640: { slidesPerView: 2.3 },
+              1024: { slidesPerView: 3.3 },
+              1280: { slidesPerView: 4.3 },
             }}
             className="mySwiper"
           >
