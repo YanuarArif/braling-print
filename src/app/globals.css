@@ -103,3 +103,7 @@ body {
     will-change: background-position; /* Improve performance */
   }
 }
+/* CSS UNTUK partial slides CAROUSEL */
+.swiper-pagination {
+  display: none; /* Hide the pagination container */
+}

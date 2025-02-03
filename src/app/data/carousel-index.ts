@@ -31,7 +31,7 @@ export const items = [
     id: 4,
     title: "Paper Bag",
     image:
-      "https://cdn.pixabay.com/photo/2021/08/23/14/50/online-shopping-6567977_1280.png",
+      "https://cdn.pixabay.com/photo/2015/09/26/09/08/hipster-958805_1280.jpg",
     categoryId: 2,
   },
   {
@@ -52,14 +52,35 @@ export const items = [
     id: 7,
     title: "Amplop",
     image:
-      "https://cdn.pixabay.com/photo/2021/08/23/14/50/online-shopping-6567977_1280.png",
+      "https://cdn.pixabay.com/photo/2015/09/26/09/08/hipster-958805_1280.jpg",
     categoryId: 4,
   },
   {
     id: 8,
     title: "Angpao",
     image:
-      "https://cdn.pixabay.com/photo/2021/08/23/14/50/online-shopping-6567977_1280.png",
+      "https://cdn.pixabay.com/photo/2015/09/26/09/08/hipster-958805_1280.jpg",
+    categoryId: 4,
+  },
+  {
+    id: 9,
+    title: "Angpao",
+    image:
+      "https://cdn.pixabay.com/photo/2015/09/26/09/08/hipster-958805_1280.jpg",
+    categoryId: 4,
+  },
+  {
+    id: 10,
+    title: "Angpao",
+    image:
+      "https://cdn.pixabay.com/photo/2015/09/26/09/08/hipster-958805_1280.jpg",
+    categoryId: 4,
+  },
+  {
+    id: 11,
+    title: "Angpao",
+    image:
+      "https://cdn.pixabay.com/photo/2015/09/26/09/08/hipster-958805_1280.jpg",
     categoryId: 4,
   },
 ];
