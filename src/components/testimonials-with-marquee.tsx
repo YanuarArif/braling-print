@@ -21,11 +21,14 @@ export function TestimonialsUi({
   testimonials,
   className,
 }: TestimonialsUiProps) {
+  // Duplicate testimonials for seamless looping
+  const duplicatedTestimonials = [...testimonials, ...testimonials];
+
   return (
     <div
       className={cn(
         "bg-background text-foreground",
-        "py-12 sm:py-24 md:py-32 px-0",
+        "py-12 sm:py-24 md:py-24 px-0",
         className
       )}
     >
@@ -40,16 +43,32 @@ export function TestimonialsUi({
         </div>
 
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
-          <div className="group flex overflow-hidden p-2 [--gap:1rem] [gap:var(--gap)] flex-row [--duration:40s]">
-            <div className="flex shrink-0 justify-around [gap:var(--gap)] animate-marquee flex-row group-hover:[animation-play-state:paused]">
-              {[...Array(4)].map((_, setIndex) =>
-                testimonials.map((testimonial, i) => (
-                  <TestimonialCard key={`${setIndex}-${i}`} {...testimonial} />
-                ))
-              )}
+          <div className="group flex overflow-hidden p-2 [--gap:1rem] [gap:var(--gap)] flex-row [--duration:30s]">
+            {/* Main marquee element */}
+            <div className="flex shrink-0 justify-around [gap:var(--gap)] animate-marquee-infinite flex-row group-hover:[animation-play-state:paused]">
+              {duplicatedTestimonials.map((testimonial, i) => (
+                <TestimonialCard
+                  key={`main-${i}-${testimonial.author.name}`}
+                  {...testimonial}
+                />
+              ))}
+            </div>
+
+            {/* Mirrored marquee element for seamless looping */}
+            <div
+              className="flex shrink-0 justify-around [gap:var(--gap)] animate-marquee-infinite flex-row group-hover:[animation-play-state:paused]"
+              aria-hidden="true"
+            >
+              {duplicatedTestimonials.map((testimonial, i) => (
+                <TestimonialCard
+                  key={`mirror-${i}-${testimonial.author.name}`}
+                  {...testimonial}
+                />
+              ))}
             </div>
           </div>
 
+          {/* Gradient overlays */}
           <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-1/3 bg-gradient-to-r from-background sm:block" />
           <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 bg-gradient-to-l from-background sm:block" />
         </div>

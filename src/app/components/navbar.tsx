@@ -3,7 +3,7 @@ import React from "react";
 
 const Navbar = () => {
   return (
-    <nav className="fixed top-0 w-full shadow-md z-50 bg-white dark:bg-black">
+    <nav className="fixed top-0 w-full shadow-sm z-50 bg-white dark:bg-black">
       <NavbarUi />
     </nav>
   );

@@ -7,6 +7,7 @@ import NewProductCarousel from "./small-comp/newproduct-carousel";
 import Footer from "./footer";
 import { TestimonialsUi } from "@/components/testimonials-with-marquee";
 import { testimonials } from "../data/testimonials-data";
+import { FaqUi } from "./faq";
 
 const HalamanDepan = () => {
   return (
@@ -37,6 +38,9 @@ const HalamanDepan = () => {
           testimonials={testimonials}
           className="mt-10" // Optional className for styling
         />
+      </section>
+      <section className="container my-3">
+        <FaqUi />
       </section>
       <section className="container my-3">
         <p>Section selanjutnya</p>

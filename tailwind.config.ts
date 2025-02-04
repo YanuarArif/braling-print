@@ -30,18 +30,20 @@ export default {
       maxWidth: {
         container: "1280px",
       },
-      animation: {
-        marquee: "marquee var(--duration) linear infinite",
-      },
       keyframes: {
         marquee: {
-          from: { transform: "translateX(0)" },
-          to: { transform: "translateX(calc(-100% - var(--gap)))" },
+          "0%": {
+            transform: "translateX(0)",
+          },
+          "100%": {
+            transform: "translateX(-50%)",
+          },
         },
       },
+      animation: {
+        "marquee-infinite": "marquee var(--duration) linear infinite",
+      },
       backgroundImage: {
-        // 'bg-street': 'url('/img/street.svg')',
-        // 'bg-braling-banner': 'url('/img/Braling-Print-Studio.png')',
         // 'grid-pattern': ',
         // 'grid-pattern-light': '
       },
